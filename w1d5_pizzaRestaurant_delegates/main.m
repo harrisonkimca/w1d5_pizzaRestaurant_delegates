@@ -11,6 +11,8 @@
 #import "InputCollector.h"
 #import "Kitchen.h"
 #import "Pizza.h"
+#import "Manager.h"
+#import "CheeryManager.h"
 
 int main(int argc, const char * argv[])
 {
@@ -18,85 +20,123 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
         
         Kitchen *restaurantKitchen = [Kitchen new];
+        Manager *manager = [Manager new];
+        CheeryManager *cheerymanager = [CheeryManager new];
         
-        while (TRUE) {
+        BOOL runLoop = YES;
+        
+        //while (TRUE) {
+        while (runLoop) {
             // Loop forever
             
-            NSLog(@"Welcome to PizzaRestaurant. Please place your order.");
-            NSString *inputString = [InputCollector inputForPrompt:@"Pick your pizza size and toppings:\n> "];
-            NSLog(@"The order you placed is: %@", inputString);
+            // select manager section
+            NSString *managerChoice = [InputCollector inputForPrompt:@"Please select a number\n1. Manager\n2. Cheery Manager\n3. No Manager\n4. Quit\n"];
+            NSLog(@"You selected %@ for your manager", managerChoice);
             
-            // take order
-            // Take the first word of the command as the size, and the rest as the toppings
-            NSArray *commandWords = [inputString componentsSeparatedByString:@" "];
-            NSArray *toppings = [commandWords subarrayWithRange:NSMakeRange(1, commandWords.count - 1)];
+            BOOL selectPizza = NO;
             
-            PizzaSize size;
-            Pizza *pizza;
-            
-            if ([commandWords[0] isEqualToString:@"small"])
+            if ([managerChoice isEqualToString:@"4"])
             {
-                size = small;
-                pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
+                NSLog(@"See you next time!");
+                break;
             }
-            else if ([commandWords[0] isEqualToString:@"medium"])
+            else if ([managerChoice isEqualToString:@"1"])
             {
-                size = medium;
-                pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
+                
+                restaurantKitchen.delegate = manager;
+                selectPizza = YES;
             }
-            else if ([commandWords[0] isEqualToString:@"large"])
+            else if ([managerChoice isEqualToString:@"2"])
             {
-                size = large;
-                pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
+                restaurantKitchen.delegate = cheerymanager;
+                selectPizza = YES;
             }
-            //else if ([[Kitchen specialPizzas] containsObject:commandWords[0]])
-            else if ([commandWords [0] isEqualToString:@"large"] && [toppings isEqualToArray:@[@"pepperoni"]])
+            else if ([managerChoice isEqualToString:@"3"])
             {
-                [[Kitchen specialPizzas] containsObject:commandWords[0]];
+                NSLog(@"You will not be using a manager this time");
+                restaurantKitchen.delegate = nil;
+                selectPizza = YES;
             }
-            
-            else if ([toppings isEqualToArray:@[@"meatlovers"]])
+            // select pizza section
+            if (selectPizza)
             {
-                [Kitchen specialPizzas];
-            }
-            // error handle order taking
-            else {
-                NSLog(@"Please enter a valid pizza size. Valid sizes are: small, medium, or large");
-                continue;
-            }
-            
-            // output order
-            
-            if (pizza)
-            {
-                // toppings
-                NSMutableString *order = [[NSMutableString alloc]init];
-                for (NSString *topping in pizza.toppings)
+                NSLog(@"Welcome to PizzaRestaurant. Please place your order");
+                NSString *inputString = [InputCollector inputForPrompt:@"Pick your pizza size and toppings:\n>"];
+                NSLog(@"The order you placed is: %@", inputString);
+                
+                // take order
+                // Take the first word of the command as the size, and the rest as the toppings
+                NSArray *commandWords = [inputString componentsSeparatedByString:@" "];
+                NSArray *toppings = [commandWords subarrayWithRange:NSMakeRange(1, commandWords.count - 1)];
+                
+                PizzaSize size;
+                Pizza *pizza;
+                
+                if ([commandWords[0] isEqualToString:@"small"])
                 {
-                    [order appendString:topping];
-                    [order appendString:@" "];
+                    size = small;
+                    pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
                 }
-                // size
-                NSString *size;
-                if(pizza.size == 0)
+                else if ([commandWords[0] isEqualToString:@"medium"])
                 {
-                    size = @"small";
+                    size = medium;
+                    pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
                 }
-                else if (pizza.size == 1)
+                else if ([commandWords[0] isEqualToString:@"large"])
                 {
-                    size = @"medium";
+                    size = large;
+                    pizza = [restaurantKitchen makePizzaWithSize:size toppings:toppings];
                 }
-                else if (pizza.size == 2)
+                //else if ([[Kitchen specialPizzas] containsObject:commandWords[0]])
+                else if ([commandWords [0] isEqualToString:@"large"] && [toppings isEqualToArray:@[@"pepperoni"]])
                 {
-                    size = @"large";
+                    [[Kitchen specialPizzas] containsObject:commandWords[0]];
                 }
-                // log order
-                NSLog(@"You ordered a %@ pizza with %@", size, order);
+                else if ([toppings isEqualToArray:@[@"meatlovers"]])
+                {
+                    [Kitchen specialPizzas];
+                }
+                // error handle order taking
+                else {
+                    NSLog(@"Please enter a valid pizza size. Valid sizes are: small, medium, or large");
+                    continue;
+                }
+                // output order
+                if (pizza)
+                {
+                    // toppings
+                    NSMutableString *order = [[NSMutableString alloc]init];
+                    for (NSString *topping in pizza.toppings)
+                    {
+                        [order appendString:topping];
+                        [order appendString:@" "];
+                    }
+                    // size
+                    NSString *size;
+                    if(pizza.size == 0)
+                    {
+                        size = @"small";
+                    }
+                    else if (pizza.size == 1)
+                    {
+                        size = @"medium";
+                    }
+                    else if (pizza.size == 2)
+                    {
+                        size = @"large";
+                    }
+                    // log order
+                    NSLog(@"You ordered a %@ pizza with %@", size, order);
+                }
+                else
+                    // error handle order output
+                {
+                    NSLog(@"Order selection not valid, please try again");
+                }
             }
             else
-                // error handle order output
             {
-                NSLog(@"Order not valid");
+                NSLog(@"Manager selection not valid, please try again");
             }
         }
     }
