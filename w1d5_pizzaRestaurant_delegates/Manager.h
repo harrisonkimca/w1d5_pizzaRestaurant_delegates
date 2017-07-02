@@ -11,4 +11,7 @@
 
 @interface Manager : NSObject <KitchenDelegate>
 
+// singleton method
++ (Manager*)sharedInstance;
+
 @end

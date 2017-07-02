@@ -20,8 +20,9 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
         
         Kitchen *restaurantKitchen = [Kitchen new];
-        Manager *manager = [Manager new];
-        CheeryManager *cheerymanager = [CheeryManager new];
+        // replace with singletons
+        //Manager *manager = [Manager new];
+        //CheeryManager *cheerymanager = [CheeryManager new];
         
         BOOL runLoop = YES;
         
@@ -42,12 +43,15 @@ int main(int argc, const char * argv[])
             }
             else if ([managerChoice isEqualToString:@"1"])
             {
-                
+                // use singleton
+                Manager *manager = [Manager sharedInstance];
                 restaurantKitchen.delegate = manager;
                 selectPizza = YES;
             }
             else if ([managerChoice isEqualToString:@"2"])
             {
+                // use singleton
+                CheeryManager *cheerymanager = [CheeryManager sharedInstance];
                 restaurantKitchen.delegate = cheerymanager;
                 selectPizza = YES;
             }

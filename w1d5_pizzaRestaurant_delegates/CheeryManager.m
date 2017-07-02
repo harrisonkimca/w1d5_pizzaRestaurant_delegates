@@ -10,6 +10,17 @@
 
 @implementation CheeryManager
 
+// singleton method
++ (CheeryManager*)sharedInstance
+{
+    static CheeryManager *_sharedInstance = nil;
+    static dispatch_once_t oncePrediate;
+    dispatch_once(&oncePrediate, ^{
+        _sharedInstance = [[CheeryManager alloc]init];
+    });
+    return _sharedInstance;
+}
+
 - (BOOL)kitchen:(Kitchen*)kitchen shouldMakePizzaOfSize:(PizzaSize)size andToppings:(NSArray*)toppings
 {
     return YES;

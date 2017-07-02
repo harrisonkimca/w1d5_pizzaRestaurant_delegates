@@ -10,6 +10,17 @@
 
 @implementation Manager
 
+// singleton method
++ (Manager*)sharedInstance
+{
+    static Manager *_sharedInstance = nil;
+    static dispatch_once_t oncePrediate;
+    dispatch_once(&oncePrediate, ^{
+        _sharedInstance = [[Manager alloc]init];
+    });
+    return _sharedInstance;
+}
+
 - (BOOL)kitchen:(Kitchen*)kitchen shouldMakePizzaOfSize:(PizzaSize)size andToppings:(NSArray*)toppings
 {
     for (NSString *topping in toppings)

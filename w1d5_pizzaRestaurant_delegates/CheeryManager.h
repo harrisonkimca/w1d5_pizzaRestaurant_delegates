@@ -11,4 +11,7 @@
 
 @interface CheeryManager : NSObject <KitchenDelegate>
 
+// singleton method
++ (CheeryManager*)sharedInstance;
+
 @end
